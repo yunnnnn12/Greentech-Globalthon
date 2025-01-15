@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status, Depends
-from database import connect
+from app.database import connect
 from mysql.connector.connection import MySQLConnection
-from crud import TodoBase, TodoCreate, TodoDelete, TodoUpdate, TodoGet
+from app.crud import TodoBase, TodoCreate, TodoDelete, TodoUpdate, TodoGet
 
 
 conn = connect()

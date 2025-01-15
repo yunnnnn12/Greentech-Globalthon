@@ -24,9 +24,9 @@ def init_db(conn: MySQLConnection):
 
 def connect():
     mydb = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "dmsdbs22",
+        host = "fastapi-aws-database.cl8qqy0go6xk.ap-northeast-2.rds.amazonaws.com",
+        user = "root_user",
+        password = "rlrkcksek19!",
         database = "todo"
     )
 

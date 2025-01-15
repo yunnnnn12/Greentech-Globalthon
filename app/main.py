@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, status, Depends
-from database import init_db, get_mydb, connect
-from crud import TodoUpdate, TodoDelete, TodoCreate, TodoGet
-import router
+from app.database import init_db, get_mydb, connect
+from app.crud import TodoUpdate, TodoDelete, TodoCreate, TodoGet
+import app.router as router
 
 app = FastAPI()
 
