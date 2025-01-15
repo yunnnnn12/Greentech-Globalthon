@@ -2,10 +2,12 @@ version: "3.8"
 
 services:
   fastapi:
-    image: fastapi
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: sonchaeyun/fastapi
     ports:
-      - 8080:8080
-    volumes:
-      - .:/app
+      - "8080:8080"
+
+    
    
