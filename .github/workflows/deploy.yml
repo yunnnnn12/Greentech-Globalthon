@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev  # dev 브랜치에서 변경이 발생할 때도 실행되도록 설정
+      #- dev  # dev 브랜치에서 변경이 발생할 때도 실행되도록 설정
 
 jobs:
   build-and-deploy:
@@ -44,6 +44,6 @@ jobs:
           # port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
             cd /home/ec2-user
-            git pull origin dev  # 최신 코드 가져오기
+            git pull origin main  # 최신 코드 가져오기
             docker-compose -f docker-compose.yml pull  # EC2 서버에서 Docker 이미지 업데이트
             docker-compose -f docker-compose.yml up -d  # Docker Compose로 컨테이너 실행
