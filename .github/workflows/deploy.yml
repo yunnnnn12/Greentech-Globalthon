@@ -1,0 +1,24 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  SSH:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: ssh to ec2
+      - uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{secrets.EC2_IP}}
+          username: ${{secrets.USER}}
+          key: ${{secrets.PEM}}
+          script: |
+            cd /home/ec2-user
+            git pull origin main
+            
+   
