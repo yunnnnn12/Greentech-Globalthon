@@ -35,6 +35,9 @@ jobs:
         - name: Fetch latest changes
           run: git fetch --all
 
+        - name: Initialize submodules
+          run: git submodule update --init --recursive
+
           
         - name: EC2 Docker Deploy
           uses: appleboy/ssh-action@master
