@@ -54,7 +54,7 @@ jobs:
             key: ${{ secrets.PEM }}
             script: |
               cd git-action-test/
-              sed -i 's|image:.*|image: '"${{ secrets.DOCKER_IMAGE }}:latest"'|' docker-compose.yaml
+              sed -i 's|image:.*|image: '"${{ secrets.DOCKER_IMAGE }}:latest"'|' docker-compose.yml
               docker-compose down
               docker-compose pull
               docker-compose up -d
