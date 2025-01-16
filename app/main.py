@@ -1,9 +1,19 @@
 from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db, get_mydb, connect
 from app.crud import TodoUpdate, TodoDelete, TodoCreate, TodoGet
 import app.router as router
 
 app = FastAPI()
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 모든 출처 허용
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 HTTP 메서드 허용
+    allow_headers=["*"],  # 모든 헤더 허용
+)
 
 @app.on_event("startup")
 def startup_event():
