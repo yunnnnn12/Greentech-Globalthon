@@ -31,6 +31,10 @@ jobs:
       steps:
         - name: Check out the repo
           uses: actions/checkout@v3
+
+        - name: Fetch latest changes
+           run: git fetch --all
+
           
         - name: EC2 Docker Deploy
           uses: appleboy/ssh-action@master
