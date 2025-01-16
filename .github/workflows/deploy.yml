@@ -2,48 +2,45 @@ name: CI/CD for Dockerized FastAPI App
 
 on:
   push:
-    branches:
-      - [ dev ]
-      #- dev  # dev 브랜치에서 변경이 발생할 때도 실행되도록 설정
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # GitHub 리포지토리에서 코드 가져오기
-
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1  # Docker 빌드 도구 설정
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
       - name: Log in to DockerHub (if using Docker Hub)
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자명
-          password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
+          username: ${{ secrets.DOCKER_USERNAME }}  
+          password: ${{ secrets.DOCKER_PASSWORD }} 
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         run: |
-          docker-compose -f docker-compose.yml build  # Docker Compose를 사용하여 이미지 빌드
+          docker build -t ${{ env.DOCKER_IMAGE }}:latest .
+          docker push ${{ env.DOCKER_IMAGE }}:latest
 
-      - name: Run tests (Optional)
-        run: |
-          docker-compose -f docker-compose.yml run --rm app pytest  # 필요한 경우 Docker 컨테이너 내에서 테스트 실행
-
-      - name: Push Docker image (if using Docker Hub)
-        run: |
-          docker-compose -f docker-compose.yml push  # Docker Hub에 이미지 푸시 (필요한 경우)
-
-      - name: SSH to EC2 and deploy
-        uses: appleboy/ssh-action@v0.1.6  # SSH를 사용하여 EC2에 배포
-        with:
-          host: ${{ secrets.EC2_IP }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.PEM }}
-          # port: ${{ secrets.REMOTE_SSH_PORT }}
-          script: |
-            cd /home/ec2-user
-            git pull origin main  # 최신 코드 가져오기
-            docker-compose -f docker-compose.yml pull  # EC2 서버에서 Docker 이미지 업데이트
-            docker-compose -f docker-compose.yml up -d  # Docker Compose로 컨테이너 실행
+  deploy:
+      needs: build-and-push
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out the repo
+          uses: actions/checkout@v3
+          
+        - name: EC2 Docker Deploy
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.EC2_IP }}
+            username: ${{ secrets.USER }}
+            key: ${{ secrets.PEM }}
+            script: |
+              cd git-action-test/
+              sed -i 's|image:.*|image: '"${{ secrets.DOCKER_IMAGE }}:latest"'|' docker-compose.yaml
+              docker-compose down
+              docker-compose pull
+              docker-compose up -d
