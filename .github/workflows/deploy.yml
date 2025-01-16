@@ -3,7 +3,7 @@ name: CI/CD for Dockerized FastAPI App
 on:
   push:
     branches:
-      - main
+      - [ dev ]
       #- dev  # dev 브랜치에서 변경이 발생할 때도 실행되도록 설정
 
 jobs:
